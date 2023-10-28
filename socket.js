@@ -73,14 +73,12 @@ function serverSocket(server,rooms){
             socketToRoomUserMap.set(socket.id, { roomID, userID });
             try {
               const updatedRoom = await Room.updateOne({ name: roomID }, { $push: { users: userID } });
-              if (updatedRoom.nModified > 0) {
                 console.log(`User ${userID} joined room ${roomID}`);
                 io.to(joinedRoomId).emit('userJoined', roomID);
                 console.log('User connected to roomID: ' + roomID);
-              } else {
-                socket.emit('roomError', 'Room is full or does not exist');
-              }
+                
             } catch (error) {
+              socket.emit('roomError', 'Room is full or does not exist');
               console.error('Error updating room document:', error);
             }
           } else {
