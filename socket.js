@@ -76,7 +76,6 @@ function serverSocket(server,rooms){
                 console.log(`User ${userID} joined room ${roomID}`);
                 io.to(joinedRoomId).emit('userJoined', roomID);
                 console.log('User connected to roomID: ' + roomID);
-                
             } catch (error) {
               socket.emit('roomError', 'Room is full or does not exist');
               console.error('Error updating room document:', error);
