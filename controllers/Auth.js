@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const User = require("../models/User");
+const User = require("../models/userModel");
 const Rank = require("../models/Rank");
 const OTP = require("../models/OTP");
 const jwt = require("jsonwebtoken");
@@ -162,6 +162,7 @@ exports.login = async (req, res) => {
 // Send OTP For Email Verification
 exports.sendotp = async (req, res) => {
 	try {
+		console.log(req);
 		console.log('in send otp controller');
 		const { email } = req.body;
 
