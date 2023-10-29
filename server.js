@@ -5,15 +5,27 @@ const PORT = process.env.PORT || 3001;
 const cors = require('cors');
 const dbConnect = require('./db')
 const checkUserInRoom = require('./middleware/GameMiddleware')
+var bodyParser = require('body-parser')
 
 const Room = require('./models/roomModel')
 
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
 
 // db connection 
 dbConnect()
 // db connection 
+
+
+// import api routes 
+const userRoutes = require("./routes/User");
+const rankRoutes = require("./routes/Rank");
+// mount api routes 
+app.use("/api/v1/auth", userRoutes);
+app.use("/api/v1/rank", rankRoutes);
 
 
 // Socket 

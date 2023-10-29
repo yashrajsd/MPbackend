@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const User = require("../models/userModel");
 require("dotenv").config();
 
 // Signup Controller for Registering USers
