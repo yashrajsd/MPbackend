@@ -1,5 +1,6 @@
 const { Server} = require('socket.io')
 const Room = require('./models/roomModel');
+const makeRiddle = require('./riddle')
 
 function serverSocket(server,rooms){
     const io = new Server(server,{
@@ -23,14 +24,70 @@ function serverSocket(server,rooms){
           }
         });
 
+        socket.on('createRiddle',(roomID)=>{
+          const riddle =  makeRiddle()
+          io.to(roomID).emit('riddle',riddle)
+        })
+
         // canvas data handling below
         socket.on('drawing', (data) => socket.broadcast.emit('drawing', data))
 
         // starting game logic below
         socket.on('gameStarted',(roomID)=>{
           console.log('socket recieved in room:'+roomID)
+
+          const roundStartTime = Date.now()
           io.to(roomID).emit('startGame')
+
+          const rounDuration = 30000;
+          const intervalId = setInterval(()=>{
+            const currentTime = Date.now()
+            const remainingTime = Math.round((rounDuration - (currentTime - roundStartTime))/1000)
+            if(remainingTime<0){
+              clearInterval(intervalId)
+              io.to(roomID).emit('roundCDT',0)
+              nextRound(roomID)
+              return io.to(roomID).emit('roundEnded')
+            }
+            io.to(roomID).emit('roundCDT',remainingTime)
+
+            
+          },1000)
+          socket.on('disconnect',()=>{
+            clearInterval(intervalId)
+          })
         })
+
+        // next round starting logic
+        const nextRound=(roomID)=>{
+          const roundAnnounce = setInterval(()=>{
+            io.to(roomID).emit('nextRound')
+            playGame(roomID)
+            clearInterval(roundAnnounce)
+          },5000)
+        }
+
+        const playGame=(roomID)=>{
+          const roundStartTime = Date.now()
+          const rounDuration = 30000;
+          const intervalId = setInterval(()=>{
+            const currentTime = Date.now()
+            const remainingTime = Math.round((rounDuration - (currentTime - roundStartTime))/1000)
+            if(remainingTime<0){
+              clearInterval(intervalId)
+              io.to(roomID).emit('roundCDT',0)
+              nextRound(roomID)
+              return io.to(roomID).emit('roundEnded')
+            }
+            io.to(roomID).emit('roundCDT',remainingTime)
+
+            
+          },1000)
+          socket.on('disconnect',()=>{
+            clearInterval(intervalId)
+          })
+        }
+
 
         socket.on('createRoom',()=>{
             const roomId = rooms.createRoom();
