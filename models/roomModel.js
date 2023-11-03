@@ -6,6 +6,8 @@ const roomSchema = new mongoose.Schema({
   users: [{ type: String }],
   rounds: { type: Number, default: 1 },
   waiting: { type: Boolean, default: true },
+  riddlesChecked:{ type: Array, default:[]},
+  riddleObj:{ type: Object, default:{}}
 });
 
 const Room = mongoose.model('Room', roomSchema);

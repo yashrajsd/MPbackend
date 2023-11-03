@@ -23,9 +23,11 @@ dbConnect()
 // import api routes 
 const userRoutes = require("./routes/User");
 const rankRoutes = require("./routes/Rank");
+// const gameRoutes = require("./routes/Game");
 // mount api routes 
 app.use("/api/v1/auth", userRoutes);
 app.use("/api/v1/rank", rankRoutes);
+// app.use("/api/v1/game", gameRoutes);
 
 
 // Socket 
